@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import web3 from './utils/InitWeb3'
+import TabCenter from './display/TabCenter'
+import {contractInstance} from "./eth/instance";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+    constructor() {
+        super()
+        this.state = {
+            currentAccount: '',
+        }
+    }
+
+    async componentWillMount() {
+        // 获取合约的所有账户
+        let accounts = await web3.eth.getAccounts()
+        console.log("current account : ", accounts[0])
+        // console.log("currentAccount : ", accounts[0])
+        // 获取平台管理员
+        // let platformManager = contractInstance.methods.platformManager().call()
+        // console.log('platformManager : ', platformManager)
+
+
+        this.setState({
+            currentAccount: accounts[0],
+        })
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>人人众筹</h1>
+                <p>当前账户：{this.state.currentAccount}</p>
+                <TabCenter/>
+            </div>
+        )
+    }
+
 }
 
 export default App;
