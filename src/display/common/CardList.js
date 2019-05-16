@@ -6,9 +6,10 @@ const src = '/images/elliot.jpg'
 const CardList = (props) => {
     // 遍历众筹合约
     let details = props.details
+    let onCardClick = props.onCardClick
     let cards = details.map(detail => {
         // 获取合约信息，并且设置到Card组件中
-        return <CardExampleCard key={detail.fundingAddress} detail={detail}/>
+        return <CardExampleCard key={detail.fundingAddress} detail={detail} onCardClick={onCardClick}/>
     })
     return (
         <Card.Group itemsPerRow={4}>
@@ -20,14 +21,15 @@ const CardList = (props) => {
 const CardExampleCard = (props) => {
     // 解构出props.detail中的数据
     let detail = props.detail
-    const {contractAddress, manager, projectName, targetMoney, supportMoney, leftTime, balance, investorCount} = detail;
+    let onCardClick = props.onCardClick
+    const {fundingAddress, manager, projectName, targetMoney, supportMoney, leftTime, balance, investorCount} = detail;
     // 计算已筹金额的百分比
     let percentage = (parseFloat(balance) / parseFloat(targetMoney)).toFixed(2) * 100
     // 把balance单位转换成eth
     let accountBalance = parseFloat(balance) / 10**18
     return (
         <div>
-            <Card>
+            <Card onClick={() => {onCardClick(detail)}}>
                 <Image src='/images/elliot.jpg'/>
                 <Card.Content>
                     <Card.Header>{projectName}</Card.Header>

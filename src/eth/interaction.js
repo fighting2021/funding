@@ -1,4 +1,5 @@
 import {factoryContractInstance, getFundingContractInstance} from "./instance";
+import web3 from '../utils/InitWeb3'
 
 // 获取我发起合约的详情
 // 该函数返回一个Promise对象，该Promise对象包含了所有的合约详情
@@ -34,6 +35,40 @@ let getFundingDetail = (fundings) => {
     return detailsPromise
 }
 
+// 创建合约
+let createFunding = (projectName, targetMoney, supportMoney, duration) => {
+
+    return new Promise(async (resolve, reject) => {
+        try { // 调用创建方法
+            let accounts = await web3.eth.getAccounts()
+            let res = await factoryContractInstance.methods.createFunding(projectName, targetMoney, supportMoney, duration).send({
+                from: accounts[0],
+            })
+            resolve(res)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+// 参与众筹
+let handleInvestFunc = async (fundingAddress, supportMoney) => {
+    // 获取合约实例
+    let fundingContractInstance = getFundingContractInstance()
+    // 设置地址
+    fundingContractInstance.options.address = fundingAddress
+    // 获取账户
+    let accounts = await web3.eth.getAccounts()
+    // 调用合约的invest方法
+    let res = await fundingContractInstance.methods.invest().send({
+        from: accounts[0],
+        value: supportMoney,
+    })
+    return res
+}
+
 export {
-    getFundingDetail
+    getFundingDetail,
+    createFunding,
+    handleInvestFunc,
 }

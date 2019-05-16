@@ -3,6 +3,7 @@ import {factoryContractInstance, fundingContractInstance} from '../eth/instance'
 import {getFundingDetail} from '../eth/interaction'
 import web3 from '../utils/InitWeb3'
 import CardList from './common/CardList'
+import CreateFundingForm from './CreateFundingForm'
 
 class CreatorFundingTab extends Component {
 
@@ -35,6 +36,7 @@ class CreatorFundingTab extends Component {
         return (
             <div>
                 <CardList details={this.state.creatorFundingDetail}/>
+                <CreateFundingForm/>
             </div>
         )
     }
