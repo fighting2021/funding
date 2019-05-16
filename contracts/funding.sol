@@ -101,7 +101,7 @@ contract Funding {
         targetMoney = _targetMoney * 10**18;
         supportMoney = _supportMoney * 10**18;
         // 合约创建时间 + 持续时间 = 结束时间
-        endTime = block.timestamp + _duration;
+        endTime = now + _duration;
 
         supportFunding = _supportFunding;
     }
@@ -187,7 +187,7 @@ contract Funding {
 
     // 返回众筹剩余时间，以秒为单位
     function getLeftTime() public view returns(uint256) {
-        return endTime - block.timestamp;
+        return endTime - now;
     }
 
     // 返回投资人的数量
