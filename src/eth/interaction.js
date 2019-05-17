@@ -51,6 +51,24 @@ let createFunding = (projectName, targetMoney, supportMoney, duration) => {
     })
 }
 
+// 创建花费请求
+let createRequest = (fundingAddress, desc, targetMoney, seller) => {
+    return new Promise(async (resolve, reject) => {
+        try { // 调用创建方法
+            let accounts = await web3.eth.getAccounts()
+            let fundingInstance = getFundingContractInstance()
+            fundingInstance.options.address = fundingAddress
+            // function createRequest(string _purpose, uint256 _cost, address _seller) onlyManager public {
+            let res = await fundingInstance.methods.createRequest(desc, targetMoney, seller).send({
+                from: accounts[0],
+            })
+            resolve(res)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 // 参与众筹
 let handleInvestFunc = async (fundingAddress, supportMoney) => {
     // 获取合约实例
@@ -67,8 +85,75 @@ let handleInvestFunc = async (fundingAddress, supportMoney) => {
     return res
 }
 
+// 获取所有花费请求申请
+let showRequests = (fundingAddress) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // 获取Funding合约实例
+            let fundingInstance = getFundingContractInstance()
+            fundingInstance.options.address = fundingAddress
+            // 调用合约方法获取请求总数
+            let requestCount = await fundingInstance.methods.getRequestCount().call()
+            // 定义一个数组，保存所有请求申请
+            let requestDetails = []
+            for (let i = 0; i < requestCount; i++) {
+                // 调用合约方法，根据索引查询请求申请
+                let requestDetail = await fundingInstance.methods.getRequest(i).call()
+                // 把结果添加到数组中
+                requestDetails.push(requestDetail)
+            }
+            resolve(requestDetails)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+// 批准
+const approveRequest = (fundingAddress, index) => {
+    return new Promise(async(resolve, reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            // 创建合约实例
+            let fundingContractInstance = getFundingContractInstance()
+            fundingContractInstance.options.address = fundingAddress
+            // 调用合约的方法
+            let res = await fundingContractInstance.methods.approveRequest(index).send({
+                from : accounts[0]
+            })
+            resolve(res)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+// 终止申请
+const finalizeRequest = (fundingAddress, index) => {
+    return new Promise(async(resolve, reject) => {
+        try {
+            let accounts = await web3.eth.getAccounts()
+            // 创建合约实例
+            let fundingContractInstance = getFundingContractInstance()
+            fundingContractInstance.options.address = fundingAddress
+            // 调用合约的方法
+            let res = await fundingContractInstance.methods.finalizeRequest(index).send({
+                from : accounts[0]
+            })
+            resolve(res)
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+
 export {
     getFundingDetail,
     createFunding,
     handleInvestFunc,
+    createRequest,
+    showRequests,
+    approveRequest,
+    finalizeRequest,
 }
